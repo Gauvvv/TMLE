@@ -1,7 +1,7 @@
 library(survey)
 library(SuperLearner)
 library(tmle)
-set.seed(1)
+set.seed(123)
 N=1000
 num.sim=1000
 results.tmle.SL1 <- results.tmle.GLM1 <- results.tmle.GLM2 <- results.tmle.GLM3 <-

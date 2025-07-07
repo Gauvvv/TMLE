@@ -1,17 +1,27 @@
+# Install Packages
+install.packages("survey")
+install.packages("SuperLearner")
+install.packages("tmle")
+install.packages("randomForest")
+
+# Load Packages
 library(survey)
 library(SuperLearner)
 library(tmle)
+library(randomForest)
+
+# Set random seed to replicate results
 set.seed(123)
-N=1000
-num.sim=1000
+
+N=100
+num.sim=5
 results.tmle.SL1 <- results.tmle.GLM1 <- results.tmle.GLM2 <- results.tmle.GLM3 <-
   NULL
 results.mle.SL1 <- results.mle.GLM1 <- results.mle.GLM2 <- NULL
 results.psw.SL1 <- results.psw.GLM2 <- NULL
-SL.library <- c("SL.glm", "SL.step.interaction","SL.glmnet", "SL.randomForest",
-                "SL.gam", "SL.rpart" )
-for(i in 1:num.sim)
-{
+SL.library <- c("SL.glm", "SL.randomForest")
+
+for(i in 1:num.sim){
   
   ######################################################################################
   ### GENERATE DATA
@@ -30,28 +40,28 @@ for(i in 1:num.sim)
   ######################################################################################
   ### TMLE approach: Super Learning
   W=cbind(X1,X2,X3)
-  tmleSL1$g <- tmle(Y, A, W, Q.SL.library = SL.library, g.SL.library = SL.library)
+  tmleSL1 <- tmle(Y, A, W, Q.SL.library = SL.library, g.SL.library = SL.library)
   results.tmle.SL1 <- c(results.tmle.SL1, tmleSL1$estimates$ATE$psi)
   
   ######################################################################################
   ### TMLE approach: GLM, MT misspecification of outcome
   # Misspecified outcome regression: Y ~ A + X1 + X2 + X3
   W=cbind(X1,X2,X3)
-  tmleGLM1 <- tmle(Y, A, W, Qform=Y~A+X1+X2+X3, gform=A~X1+X2+X3)
+  tmleGLM1 <- tmle(Y, A, W, Qform="Y~A+X1+X2+X3", gform="A~X1+X2+X3")
   results.tmle.GLM1 <- c(results.tmle.GLM1, tmleGLM1$estimates$ATE$psi)
   
   ######################################################################################
   ### TMLE approach: GLM, OV misspecification of outcome (X3)
   # Misspecified outcome regression: Y ~ A + X1 + X2
   W=cbind(X1,X2,X3)
-  tmleGLM2 <- tmle(Y, A, W, Qform=Y~A+X1+X2, gform=A~X1+X2+X3)
+  tmleGLM2 <- tmle(Y, A, W, Qform="Y~A+X1+X2", gform="A~X1+X2+X3")
   results.tmle.GLM2 <- c(results.tmle.GLM2, tmleGLM2$estimates$ATE$psi)
   
   ######################################################################################
   ### TMLE approach: GLM, OV misspecification of exposure (X3)
   # Misspecified exposure regression: A ~ X1 + X2
   W=cbind(X1,X2,X3)
-  tmleGLM3 <- tmle(Y, A, W, Qform=Y~A+X1+X2+X3+A:X3, gform=A~X1+X2)
+  tmleGLM3 <- tmle(Y, A, W, Qform="Y~A+X1+X2+X3+A:X3", gform="A~X1+X2")
   results.tmle.GLM3 <- c(results.tmle.GLM3, tmleGLM3$estimates$ATE$psi)
   
   
@@ -61,8 +71,8 @@ for(i in 1:num.sim)
                    cbind(A=0, data[,2:4]))
   SL.fit1 <- SuperLearner(Y=data[,5], X=data[,1:4], SL.library=SL.library,
                           family="gaussian",method="method.NNLS", newX=newData, verbose=TRUE)
-  data$Y1.pred <- SL.fit1$SL.predict[1:1000]
-  data$Y0.pred <- SL.fit1$SL.predict[1001:2000]
+  data$Y1.pred <- SL.fit1$SL.predict[1:100]
+  data$Y0.pred <- SL.fit1$SL.predict[101:200]
   mle.ATE.SL1 <- mean(data$Y1.pred - data$Y0.pred)
   results.mle.SL1 <- c(results.mle.SL1, mle.ATE.SL1)
   
@@ -109,6 +119,7 @@ for(i in 1:num.sim)
     weighted.mean(data$Y[data$A==0],w=data$ps[data$A==0])
   results.psw.GLM2 <- c(results.psw.GLM2, PS.ATE.GLM2)
 }
+
 ######################################################################################
 ### Results
 ######################################################################################

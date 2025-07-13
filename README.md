@@ -10,6 +10,40 @@ Observational Studies. Am J Epidemiol. 2017;185(1):65–73.
 This work is for educational and research purposes only and does not
 claim ownership of the original design or methods.
 
+TMLE can be used to estimate the ATE, a common epidemiologic estimand. A
+primary advantage of TMLE is that it is inherently a doubly robust
+estimator. Neither G-computation nor propensity score methods as
+commonly implemented (e.g., IPW) are doubly robust, although other
+doubly robust methods exist (28–30). TMLE’s double robustness ensures
+unbiasedness of the ATE if either the exposure or the out- come
+mechanism is consistently estimated. As highlighted in our simulation,
+this property insulates TMLE even against significant model
+misspecification arising from an omitted confounder in either the
+exposure or outcome regressions. In contrast, our results demonstrated
+that misspecification arising from an omitted variable resulted in large
+bias for both G-computation and IPW.
+
+Fundamentally, TMLE and the other estimators discussed can be
+implemented using machine learning algorithms, which can prove
+advantageous in complex observational data. As our simulation results
+demonstrate, super learning performedbetter than or equal to parametric
+regression for all 3 estimators. The ability of super learning to
+protect against certain types of functional form misspecification is
+demonstrated by the G-computation results, as super learning yielded
+smaller bias than parametric regression with only main terms. Given the
+complexity of data in typical observational studies, correct
+specification of all parametric regressions is unlikely, yet bias can
+arise from even minor functional form misspecification. Machine learning
+algorithms, particularly ensemble methods such as super learning, can
+empirically identify interaction, nonlinear, and higher-order
+relationships among variables; therefore, the corresponding ATE estimate
+is less likely to be biased due to a misspecified functional form in
+comparison with main-terms parametric regression. Additionally, while
+
+TMLE with super learning and parametric regression performed
+equivalently in our simulation study, TMLE with super learning may
+outperform parametric regression in cases of more complex data
+
 ## Data-Generating Process
 
 We simulate observational data with the following structure:

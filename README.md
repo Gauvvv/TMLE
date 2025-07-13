@@ -42,7 +42,7 @@ We simulate observational data with the following structure:
     # Combine into a data.frame
     data <- data.frame(X1, X2, X3, A, Y)
 
-## 📐 True Average Treatment Effect (ATE)
+## True Average Treatment Effect (ATE)
 
 We define the Average Treatment Effect (ATE) as the expected difference
 in potential outcomes:

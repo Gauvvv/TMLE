@@ -1,28 +1,218 @@
-## R Markdown
+## Impact of Model Misspecification on Causal Effect Estimation: A Simulation Using Super Learner and Generalized Linear Models
 
-This is an R Markdown document. Markdown is a simple formatting syntax
-for authoring HTML, PDF, and MS Word documents. For more details on
-using R Markdown see <http://rmarkdown.rstudio.com>.
+# Acknowledgment
 
-When you click the **Knit** button a document will be generated that
-includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
+This project replicates the simulation study from: Schuler MS, Rose S.
+Targeted Maximum Likelihood Estimation for Causal Inference in
+Observational Studies. Am J Epidemiol. 2017;185(1):65–73.
+<https://doi.org/10.1093/aje/kww165>
 
-    summary(cars)
+This work is for educational and research purposes only and does not
+claim ownership of the original design or methods.
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+## Data-Generating Process
 
-## Including Plots
+We simulate observational data with the following structure:
 
-You can also embed plots, for example:
+-   `X1`: Gender (binary; 55% probability of being 1)
+-   `X2`: Therapy use (binary; 30% probability)
+-   `X3`: Antidepressant use (binary; 25% probability)
+-   `A`: Regular physical exercise (binary exposure, depends on
+    covariates)
+-   `Y`: CES-D depression score (continuous outcome, depends on A and
+    covariates)
 
-![](README_files/figure-markdown_strict/pressure-1.png)
+<!-- -->
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+    # Load required libraries
+    set.seed(123)  # For reproducibility
+    N <- 1000      # Sample size
+
+    # Covariates
+    X1 <- rbinom(N, 1, prob = 0.55)  # Gender
+    X2 <- rbinom(N, 1, prob = 0.30)  # Therapy
+    X3 <- rbinom(N, 1, prob = 0.25)  # Antidepressant use
+
+    # Exposure: Regular physical exercise
+    A <- rbinom(N, 1, plogis(-0.5 + 0.75*X1 + 1*X2 + 1.5*X3))
+
+    # Outcome: CES-D score
+    Y <- 24 - 3*A + 3*X1 - 4*X2 - 6*X3 - 1.5*A*X3 + rnorm(N, mean = 0, sd = 4.5)
+
+    # Combine into a data.frame
+    data <- data.frame(X1, X2, X3, A, Y)
+
+## 📐 True Average Treatment Effect (ATE)
+
+We define the Average Treatment Effect (ATE) as the expected difference
+in potential outcomes:
+
+ATE = 𝔼\[*Y*<sup>(1)</sup> − *Y*<sup>(0)</sup>\]
+
+From the data-generating model:
+
+*Y* = 24 − 3*A* + 3*X*<sub>1</sub> − 4*X*<sub>2</sub> − 6*X*<sub>3</sub> − 1.5*A**X*<sub>3</sub> + *ε*
+
+The conditional treatment effect is:
+
+*Y*<sup>(1)</sup> − *Y*<sup>(0)</sup> = −3 − 1.5*X*<sub>3</sub>
+
+Taking the expectation over *X*<sub>3</sub> ∼ Bernoulli(0.25):
+
+$$
+\text{ATE} = \mathbb{E}\[-3 - 1.5X\_3\] = -3 - 1.5 \cdot \mathbb{E}\[X\_3\] = -3 - 1.5 \cdot 0.25 = \boxed{-3.375}
+$$
+
+    png("cesd_plot.png", width = 600, height = 400)
+    boxplot(Y ~ A, data = data,
+            main = "CES-D Score by Exercise Status",
+            names = c("No Exercise", "Exercise"),
+            col = c("tomato", "skyblue"),
+            ylab = "CES-D Score")
+    dev.off()
+
+    ## png 
+    ##   2
+
+<figure>
+<img src="cesd_plot.png" alt="CES-D Plot" />
+<figcaption aria-hidden="true">CES-D Plot</figcaption>
+</figure>
+
+# Results
+
+Our simulation study demonstrates all methods using super learning,
+highlighting that incorporation of machine learning may outperform
+parametric regression in observational data settings.
+
+    ### Calculate mean estimates
+    estimates
+
+    ##                [,1]
+    ## tmle.SL1  -3.326072
+    ## tmle.GLM1 -3.291371
+    ## tmle.GLM2 -3.471766
+    ## tmle.GLM3 -3.331520
+    ## mle.SL1   -3.134106
+    ## mle.GLM1  -3.251517
+    ## mle.GLM2  -5.004291
+    ## psw.SL1   -3.614885
+    ## psw.GLM2  -4.989928
+
+# Calculate SEs
+
+    ##                   [,1]
+    ## tmle.SL1.se  1.0648508
+    ## tmle.GLM1.se 1.1037674
+    ## tmle.GLM2.se 1.1069864
+    ## tmle.GLM3.se 1.0847429
+    ## mle.SL1.se   0.9870162
+    ## mle.GLM1.se  1.0352856
+    ## mle.GLM2.se  1.1940494
+    ## psw.SL1.se   1.0832987
+    ## psw.GLM2.se  1.2096752
+
+# Calculate 95% CI
+
+    ##                   2.5%     97.5%
+    ## tmle.SL1.ci  -5.007147 -1.241042
+    ## tmle.GLM1.ci -5.017045 -1.193450
+    ## tmle.GLM2.ci -5.452953 -1.417301
+    ## tmle.GLM3.ci -5.169598 -1.384256
+    ## mle.SL1.ci   -5.063086 -1.322984
+    ## mle.GLM1.ci  -5.168288 -1.293449
+    ## mle.GLM2.ci  -7.501730 -2.567554
+    ## psw.SL1.ci   -5.459886 -1.486604
+    ## psw.GLM2.ci  -7.417653 -2.537348
+
+### Summary Estimates
+
+<table>
+<caption>Estimated ATEs with SEs and 95% Confidence Intervals</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Method</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: right;">Lower</th>
+<th style="text-align: right;">Upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">tmle.SL1</td>
+<td style="text-align: left;">TMLE SL</td>
+<td style="text-align: right;">-3.326</td>
+<td style="text-align: right;">1.065</td>
+<td style="text-align: right;">-5.007</td>
+<td style="text-align: right;">-1.241</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tmle.GLM1</td>
+<td style="text-align: left;">TMLE GLM1</td>
+<td style="text-align: right;">-3.291</td>
+<td style="text-align: right;">1.104</td>
+<td style="text-align: right;">-5.017</td>
+<td style="text-align: right;">-1.193</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tmle.GLM2</td>
+<td style="text-align: left;">TMLE GLM2</td>
+<td style="text-align: right;">-3.472</td>
+<td style="text-align: right;">1.107</td>
+<td style="text-align: right;">-5.453</td>
+<td style="text-align: right;">-1.417</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tmle.GLM3</td>
+<td style="text-align: left;">TMLE GLM3</td>
+<td style="text-align: right;">-3.332</td>
+<td style="text-align: right;">1.085</td>
+<td style="text-align: right;">-5.170</td>
+<td style="text-align: right;">-1.384</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mle.SL1</td>
+<td style="text-align: left;">GComp SL</td>
+<td style="text-align: right;">-3.134</td>
+<td style="text-align: right;">0.987</td>
+<td style="text-align: right;">-5.063</td>
+<td style="text-align: right;">-1.323</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mle.GLM1</td>
+<td style="text-align: left;">GComp GLM1</td>
+<td style="text-align: right;">-3.252</td>
+<td style="text-align: right;">1.035</td>
+<td style="text-align: right;">-5.168</td>
+<td style="text-align: right;">-1.293</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">mle.GLM2</td>
+<td style="text-align: left;">GComp GLM2</td>
+<td style="text-align: right;">-5.004</td>
+<td style="text-align: right;">1.194</td>
+<td style="text-align: right;">-7.502</td>
+<td style="text-align: right;">-2.568</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">psw.SL1</td>
+<td style="text-align: left;">IPW SL</td>
+<td style="text-align: right;">-3.615</td>
+<td style="text-align: right;">1.083</td>
+<td style="text-align: right;">-5.460</td>
+<td style="text-align: right;">-1.487</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">psw.GLM2</td>
+<td style="text-align: left;">IPW GLM2</td>
+<td style="text-align: right;">-4.990</td>
+<td style="text-align: right;">1.210</td>
+<td style="text-align: right;">-7.418</td>
+<td style="text-align: right;">-2.537</td>
+</tr>
+</tbody>
+</table>
+
+Estimated ATEs with SEs and 95% Confidence Intervals

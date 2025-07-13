@@ -85,48 +85,6 @@ Our simulation study demonstrates all methods using super learning,
 highlighting that incorporation of machine learning may outperform
 parametric regression in observational data settings.
 
-    ### Calculate mean estimates
-    estimates
-
-    ##                [,1]
-    ## tmle.SL1  -3.326072
-    ## tmle.GLM1 -3.291371
-    ## tmle.GLM2 -3.471766
-    ## tmle.GLM3 -3.331520
-    ## mle.SL1   -3.134106
-    ## mle.GLM1  -3.251517
-    ## mle.GLM2  -5.004291
-    ## psw.SL1   -3.614885
-    ## psw.GLM2  -4.989928
-
-# Calculate SEs
-
-    ##                   [,1]
-    ## tmle.SL1.se  1.0648508
-    ## tmle.GLM1.se 1.1037674
-    ## tmle.GLM2.se 1.1069864
-    ## tmle.GLM3.se 1.0847429
-    ## mle.SL1.se   0.9870162
-    ## mle.GLM1.se  1.0352856
-    ## mle.GLM2.se  1.1940494
-    ## psw.SL1.se   1.0832987
-    ## psw.GLM2.se  1.2096752
-
-# Calculate 95% CI
-
-    ##                   2.5%     97.5%
-    ## tmle.SL1.ci  -5.007147 -1.241042
-    ## tmle.GLM1.ci -5.017045 -1.193450
-    ## tmle.GLM2.ci -5.452953 -1.417301
-    ## tmle.GLM3.ci -5.169598 -1.384256
-    ## mle.SL1.ci   -5.063086 -1.322984
-    ## mle.GLM1.ci  -5.168288 -1.293449
-    ## mle.GLM2.ci  -7.501730 -2.567554
-    ## psw.SL1.ci   -5.459886 -1.486604
-    ## psw.GLM2.ci  -7.417653 -2.537348
-
-### Summary Estimates
-
 <table>
 <caption>Estimated ATEs with SEs and 95% Confidence Intervals</caption>
 <thead>

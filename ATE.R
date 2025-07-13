@@ -1,8 +1,8 @@
 # Install Packages
-install.packages("survey")
-install.packages("SuperLearner")
-install.packages("tmle")
-install.packages("randomForest")
+# install.packages("survey")
+# install.packages("SuperLearner")
+# install.packages("tmle")
+# install.packages("randomForest")
 
 # Load Packages
 library(survey)
@@ -14,7 +14,7 @@ library(randomForest)
 set.seed(123)
 
 N=100
-num.sim=5
+num.sim=100
 results.tmle.SL1 <- results.tmle.GLM1 <- results.tmle.GLM2 <- results.tmle.GLM3 <-
   NULL
 results.mle.SL1 <- results.mle.GLM1 <- results.mle.GLM2 <- NULL

@@ -120,5 +120,4 @@ summary_table <- data.frame(
 )
 # Pretty table
 knitr::kable(summary_table, digits = 3, caption = "Estimated ATEs with SEs and 95% Confidence Intervals")
-
 ```

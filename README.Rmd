@@ -1,0 +1,131 @@
+---
+title: "Impact of Model Misspecification on Causal Effect Estimation: A Simulation Using Super Learner and Generalized Linear Models"
+author: "Gauvain YOUDOM HAMKOUNG"
+date: "2025-07-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Impact of Model Misspecification on Causal Effect Estimation: A Simulation Using Super Learner and Generalized Linear Models
+
+# Acknowledgment
+This project replicates the simulation study from:
+Schuler MS, Rose S. Targeted Maximum Likelihood Estimation for Causal Inference in Observational Studies. Am J Epidemiol. 2017;185(1):65–73.
+https://doi.org/10.1093/aje/kww165
+
+This work is for educational and research purposes only and does not claim ownership of the original design or methods.
+
+
+TMLE can be used to estimate the ATE, a common epidemiologic estimand. A primary advantage of TMLE is that it is inherently a doubly robust estimator. Neither G-computation nor propensity score methods as commonly implemented (e.g., IPW) are doubly robust, although other doubly robust methods exist (28–30). TMLE’s double robustness ensures unbiasedness of the ATE if either the exposure or the out-
+come mechanism is consistently estimated. As highlighted in our simulation, this property insulates TMLE even against significant model misspecification arising from an omitted confounder in either the exposure or outcome regressions. In contrast, our results demonstrated that misspecification arising from an omitted variable resulted in large bias for both G-computation and IPW.
+
+
+Fundamentally, TMLE and the other estimators discussed can be implemented using machine learning algorithms, which can prove advantageous in complex observational data. As our simulation results demonstrate, super learning performed better than or equal to parametric regression for all 3 estimators. The ability of super learning to protect against certain types of functional form misspecification is demonstrated by the G-computation results, as super learning yielded smaller bias than parametric regression with only main terms. Given the complexity of data in typical observational studies, correct specification of all parametric regressions is unlikely, yet bias can arise from even minor functional form misspecification. Machine learning algorithms, particularly ensemble methods such as super learning, can empirically identify interaction, nonlinear, and higher-order relationships among variables; therefore, the corresponding ATE estimate is less likely to be biased due to a misspecified functional form in comparison with main-terms parametric regression. Additionally, while TMLE with super learning and parametric regression performed equivalently in our simulation study, TMLE with super learning may outperform parametric regression in cases of more complex data
+
+## Data-Generating Process
+
+We simulate observational data with the following structure:
+
+- `X1`: Gender (binary; 55% probability of being 1)
+- `X2`: Therapy use (binary; 30% probability)
+- `X3`: Antidepressant use (binary; 25% probability)
+- `A`: Regular physical exercise (binary exposure, depends on covariates)
+- `Y`: CES-D depression score (continuous outcome, depends on A and covariates)
+
+```{r data-generating-model, echo=TRUE, message=FALSE, warning=FALSE}
+# Load required libraries
+set.seed(123)  # For reproducibility
+N <- 1000      # Sample size
+
+# Covariates
+X1 <- rbinom(N, 1, prob = 0.55)  # Gender
+X2 <- rbinom(N, 1, prob = 0.30)  # Therapy
+X3 <- rbinom(N, 1, prob = 0.25)  # Antidepressant use
+
+# Exposure: Regular physical exercise
+A <- rbinom(N, 1, plogis(-0.5 + 0.75*X1 + 1*X2 + 1.5*X3))
+
+# Outcome: CES-D score
+Y <- 24 - 3*A + 3*X1 - 4*X2 - 6*X3 - 1.5*A*X3 + rnorm(N, mean = 0, sd = 4.5)
+
+# Combine into a data.frame
+data <- data.frame(X1, X2, X3, A, Y)
+```
+
+## True Average Treatment Effect (ATE)
+
+We define the Average Treatment Effect (ATE) as the expected difference in potential outcomes:
+
+\[
+\text{ATE} = \mathbb{E}[Y^{(1)} - Y^{(0)}]
+\]
+
+From the data-generating model:
+
+\[
+Y = 24 - 3A + 3X_1 - 4X_2 - 6X_3 - 1.5AX_3 + \varepsilon
+\]
+
+The conditional treatment effect is:
+
+\[
+Y^{(1)} - Y^{(0)} = -3 - 1.5X_3
+\]
+
+Taking the expectation over \(X_3 \sim \text{Bernoulli}(0.25)\):
+
+\[
+\text{ATE} = \mathbb{E}[-3 - 1.5X_3] = -3 - 1.5 \cdot \mathbb{E}[X_3] = -3 - 1.5 \cdot 0.25 = \boxed{-3.375}
+\]
+
+
+
+
+
+```{r}
+png("cesd_plot.png", width = 600, height = 400)
+boxplot(Y ~ A, data = data,
+        main = "CES-D Score by Exercise Status",
+        names = c("No Exercise", "Exercise"),
+        col = c("tomato", "skyblue"),
+        ylab = "CES-D Score")
+dev.off()
+```
+
+
+![CES-D Plot](cesd_plot.png)
+
+# Results
+
+Our simulation study demonstrates all methods using super learning, highlighting that incorporation of machine learning may outperform parametric regression in observational data settings.
+
+```{r results-table, echo=FALSE, message=FALSE}
+# Create a summary table
+# Load required package (optional but recommended for styling)
+# install.packages("kableExtra")
+library(kableExtra)
+
+# True ATE value
+true_ATE <- -3.375
+
+# Create the summary table
+summary_table <- data.frame(
+  Method = c("TMLE SL", "TMLE GLM1", "TMLE GLM2", "TMLE GLM3",
+             "GComp SL", "GComp GLM1", "GComp GLM2",
+             "IPW SL", "IPW GLM2"),
+  Estimate = estimates,
+  SE = se,
+  `95% CI Lower` = ci[,1],
+  `95% CI Upper` = ci[,2],
+  Bias = estimates - true_ATE,
+  `% Bias` = 100 * (estimates - true_ATE) / true_ATE
+)
+
+# Render table
+knitr::kable(summary_table, digits = c(NA, 3, 3, 3, 3, 2, 1),
+             caption = "Estimated ATEs with SEs, 95% CIs, Bias and Percent Bias") %>%
+  kableExtra::kable_styling(full_width = FALSE, position = "left")
+```

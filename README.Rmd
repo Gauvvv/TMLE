@@ -103,11 +103,6 @@ dev.off()
 Our simulation study demonstrates all methods using super learning, highlighting that incorporation of machine learning may outperform parametric regression in observational data settings.
 
 ```{r results-table, echo=FALSE, message=FALSE}
-# Create a summary table
-# Load required package (optional but recommended for styling)
-# install.packages("kableExtra")
-library(kableExtra)
-
 # True ATE value
 true_ATE <- -3.375
 
@@ -118,14 +113,12 @@ summary_table <- data.frame(
              "IPW SL", "IPW GLM2"),
   Estimate = estimates,
   SE = se,
-  `95% CI Lower` = ci[,1],
-  `95% CI Upper` = ci[,2],
+  Lower= ci[,1],
+  Upper = ci[,2],
   Bias = estimates - true_ATE,
-  `% Bias` = 100 * (estimates - true_ATE) / true_ATE
+  Percent = 100 * (estimates - true_ATE) / true_ATE
 )
+# Pretty table
+knitr::kable(summary_table, digits = 3, caption = "Estimated ATEs with SEs and 95% Confidence Intervals")
 
-# Render table
-knitr::kable(summary_table, digits = c(NA, 3, 3, 3, 3, 2, 1),
-             caption = "Estimated ATEs with SEs, 95% CIs, Bias and Percent Bias") %>%
-  kableExtra::kable_styling(full_width = FALSE, position = "left")
 ```

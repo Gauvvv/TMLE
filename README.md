@@ -26,7 +26,7 @@ bias for both G-computation and IPW.
 Fundamentally, TMLE and the other estimators discussed can be
 implemented using machine learning algorithms, which can prove
 advantageous in complex observational data. As our simulation results
-demonstrate, super learning performedbetter than or equal to parametric
+demonstrate, super learning performed better than or equal to parametric
 regression for all 3 estimators. The ability of super learning to
 protect against certain types of functional form misspecification is
 demonstrated by the G-computation results, as super learning yielded
@@ -39,7 +39,6 @@ empirically identify interaction, nonlinear, and higher-order
 relationships among variables; therefore, the corresponding ATE estimate
 is less likely to be biased due to a misspecified functional form in
 comparison with main-terms parametric regression. Additionally, while
-
 TMLE with super learning and parametric regression performed
 equivalently in our simulation study, TMLE with super learning may
 outperform parametric regression in cases of more complex data
@@ -119,8 +118,18 @@ Our simulation study demonstrates all methods using super learning,
 highlighting that incorporation of machine learning may outperform
 parametric regression in observational data settings.
 
-<table>
+<table style="width:100%;">
 <caption>Estimated ATEs with SEs and 95% Confidence Intervals</caption>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 16%" />
+<col style="width: 13%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 12%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -130,6 +139,7 @@ parametric regression in observational data settings.
 <th style="text-align: right;">Lower</th>
 <th style="text-align: right;">Upper</th>
 <th style="text-align: right;">Bias</th>
+<th style="text-align: right;">Percent</th>
 </tr>
 </thead>
 <tbody>
@@ -140,7 +150,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.065</td>
 <td style="text-align: right;">-5.007</td>
 <td style="text-align: right;">-1.241</td>
-<td style="text-align: right;">-0.049</td>
+<td style="text-align: right;">0.049</td>
+<td style="text-align: right;">-1.450</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tmle.GLM1</td>
@@ -149,7 +160,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.104</td>
 <td style="text-align: right;">-5.017</td>
 <td style="text-align: right;">-1.193</td>
-<td style="text-align: right;">-0.084</td>
+<td style="text-align: right;">0.084</td>
+<td style="text-align: right;">-2.478</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">tmle.GLM2</td>
@@ -158,7 +170,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.107</td>
 <td style="text-align: right;">-5.453</td>
 <td style="text-align: right;">-1.417</td>
-<td style="text-align: right;">0.097</td>
+<td style="text-align: right;">-0.097</td>
+<td style="text-align: right;">2.867</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tmle.GLM3</td>
@@ -167,7 +180,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.085</td>
 <td style="text-align: right;">-5.170</td>
 <td style="text-align: right;">-1.384</td>
-<td style="text-align: right;">-0.043</td>
+<td style="text-align: right;">0.043</td>
+<td style="text-align: right;">-1.288</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mle.SL1</td>
@@ -176,7 +190,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">0.987</td>
 <td style="text-align: right;">-5.063</td>
 <td style="text-align: right;">-1.323</td>
-<td style="text-align: right;">-0.241</td>
+<td style="text-align: right;">0.241</td>
+<td style="text-align: right;">-7.138</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mle.GLM1</td>
@@ -185,7 +200,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.035</td>
 <td style="text-align: right;">-5.168</td>
 <td style="text-align: right;">-1.293</td>
-<td style="text-align: right;">-0.123</td>
+<td style="text-align: right;">0.123</td>
+<td style="text-align: right;">-3.659</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mle.GLM2</td>
@@ -194,7 +210,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.194</td>
 <td style="text-align: right;">-7.502</td>
 <td style="text-align: right;">-2.568</td>
-<td style="text-align: right;">1.629</td>
+<td style="text-align: right;">-1.629</td>
+<td style="text-align: right;">48.275</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">psw.SL1</td>
@@ -203,7 +220,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.083</td>
 <td style="text-align: right;">-5.460</td>
 <td style="text-align: right;">-1.487</td>
-<td style="text-align: right;">0.240</td>
+<td style="text-align: right;">-0.240</td>
+<td style="text-align: right;">7.108</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">psw.GLM2</td>
@@ -212,7 +230,8 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.210</td>
 <td style="text-align: right;">-7.418</td>
 <td style="text-align: right;">-2.537</td>
-<td style="text-align: right;">1.615</td>
+<td style="text-align: right;">-1.615</td>
+<td style="text-align: right;">47.850</td>
 </tr>
 </tbody>
 </table>

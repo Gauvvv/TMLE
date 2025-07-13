@@ -95,6 +95,7 @@ parametric regression in observational data settings.
 <th style="text-align: right;">SE</th>
 <th style="text-align: right;">Lower</th>
 <th style="text-align: right;">Upper</th>
+<th style="text-align: right;">Bias</th>
 </tr>
 </thead>
 <tbody>
@@ -105,6 +106,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.065</td>
 <td style="text-align: right;">-5.007</td>
 <td style="text-align: right;">-1.241</td>
+<td style="text-align: right;">-0.049</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tmle.GLM1</td>
@@ -113,6 +115,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.104</td>
 <td style="text-align: right;">-5.017</td>
 <td style="text-align: right;">-1.193</td>
+<td style="text-align: right;">-0.084</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">tmle.GLM2</td>
@@ -121,6 +124,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.107</td>
 <td style="text-align: right;">-5.453</td>
 <td style="text-align: right;">-1.417</td>
+<td style="text-align: right;">0.097</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">tmle.GLM3</td>
@@ -129,6 +133,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.085</td>
 <td style="text-align: right;">-5.170</td>
 <td style="text-align: right;">-1.384</td>
+<td style="text-align: right;">-0.043</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mle.SL1</td>
@@ -137,6 +142,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">0.987</td>
 <td style="text-align: right;">-5.063</td>
 <td style="text-align: right;">-1.323</td>
+<td style="text-align: right;">-0.241</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mle.GLM1</td>
@@ -145,6 +151,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.035</td>
 <td style="text-align: right;">-5.168</td>
 <td style="text-align: right;">-1.293</td>
+<td style="text-align: right;">-0.123</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">mle.GLM2</td>
@@ -153,6 +160,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.194</td>
 <td style="text-align: right;">-7.502</td>
 <td style="text-align: right;">-2.568</td>
+<td style="text-align: right;">1.629</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">psw.SL1</td>
@@ -161,6 +169,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.083</td>
 <td style="text-align: right;">-5.460</td>
 <td style="text-align: right;">-1.487</td>
+<td style="text-align: right;">0.240</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">psw.GLM2</td>
@@ -169,6 +178,7 @@ parametric regression in observational data settings.
 <td style="text-align: right;">1.210</td>
 <td style="text-align: right;">-7.418</td>
 <td style="text-align: right;">-2.537</td>
+<td style="text-align: right;">1.615</td>
 </tr>
 </tbody>
 </table>
